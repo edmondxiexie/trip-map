@@ -25,16 +25,13 @@ class MapView extends Component {
 
   buildLineGroupElement() {
     const { trips } = this.props;
-    console.log("------", trips.length);
     let res = [];
     if (isEmpty(trips)) {
-      console.log("********");
       return res;
     }
 
     for (let i = 0; i < trips.length; i++) {
       const trip = trips[i];
-      console.log(trip);
       const data = {
         type: "Feature",
         properties: {
@@ -50,14 +47,11 @@ class MapView extends Component {
       };
       res.push(<LineGroup key={i} data={data} meshClass={"trip-line"} />);
     }
-    console.log("res", res);
     return res;
   }
 
   render() {
     const { trip1 } = this.props;
-
-    console.log("props", this.props);
 
     const width = 700;
     const height = 700;

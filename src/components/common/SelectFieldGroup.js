@@ -28,7 +28,6 @@ const SelectFieldGroup = ({
         value={value}
         options={optionsArr}
         placeholder={placeholder}
-        multi={multi}
         onChange={value => {
           onChange(value);
         }}
