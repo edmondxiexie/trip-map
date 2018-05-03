@@ -1,6 +1,10 @@
 .trip-line {
-  stroke: red !important;
-  stroke-width: 2px !important;
+  stroke: #34ace0 !important;
+  stroke-width: 3px !important;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 // svg.react-d3-map-core__container_svg g g g g g {

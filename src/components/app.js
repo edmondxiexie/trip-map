@@ -10,8 +10,9 @@ export default class App extends Component {
     this.state = {
       trips: {},
       tripsArr: [],
-      curTripName: "",
-      tripOptions: {}
+      curTripName: "all",
+      tripOptions: {},
+      allStatistic: {}
     };
   }
 
@@ -23,9 +24,22 @@ export default class App extends Component {
     let exampleTrip;
     const tripOptions = {};
 
+    const allStatistic = {
+      speed_0_10: 0,
+      speed_10_20: 0,
+      speed_20_30: 0,
+      speed_30_40: 0,
+      speed_40_50: 0,
+      speed_50_60: 0,
+      speed_60: 0
+    };
+
     for (let tripFileName of tripFiles.keys()) {
       const tripFile = tripFiles(tripFileName);
-      data.push(tripFile);
+
+      tripFileName = tripFileName.split(".")[1].split("/")[1];
+
+      data.push(Object.assign({ tripFileName }, tripFile));
 
       const start_point = Object.assign({}, tripFile.coords[0]);
       const end_point = Object.assign(
@@ -61,10 +75,6 @@ export default class App extends Component {
         }
       }
 
-      console.log("statistic", statistic);
-
-      tripFileName = tripFileName.split(".")[1].split("/")[1];
-
       dataMap[tripFileName] = Object.assign(
         { start_point, end_point, statistic },
         tripFile
@@ -72,16 +82,25 @@ export default class App extends Component {
 
       exampleTrip = dataMap[tripFileName];
       tripOptions[tripFileName] = tripFileName;
+
+      for (let range in statistic) {
+        allStatistic[range] += statistic[range];
+      }
     }
-    console.log("dataMap", dataMap);
 
     const statisticArray = [];
 
     this.setState({
       trips: dataMap,
       tripsArr: data,
-      tripOptions
+      tripOptions,
+      allStatistic
     });
+  }
+
+  onLineClick(tripName) {
+    console.log("lineClick", tripName);
+    this.setState({ curTripName: tripName });
   }
 
   onSelectChange(selected, key) {
@@ -94,11 +113,21 @@ export default class App extends Component {
   }
 
   render() {
-    const { trips, tripsArr, curTripName, tripOptions } = this.state;
+    const {
+      trips,
+      tripsArr,
+      curTripName,
+      tripOptions,
+      allStatistic
+    } = this.state;
 
     let curTrip = {};
     if (curTripName !== "all") {
       curTrip = trips[curTripName];
+    } else {
+      curTrip = {
+        statistic: allStatistic
+      };
     }
 
     console.log("curTrip", curTrip);
@@ -108,6 +137,16 @@ export default class App extends Component {
         <h1>Hello World</h1>
         <div className="row">
           <div className="col-md-4">
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                this.setState({
+                  curTripName: "all"
+                });
+              }}
+            >
+              Show All Data
+            </button>
             <SelectFieldGroup
               label="Trip"
               name="curTripName"
@@ -119,7 +158,12 @@ export default class App extends Component {
             <PieChart trip={curTrip} />
           </div>
           <div className="col-md-8">
-            <MapView trips={tripsArr} />
+            <MapView
+              trips={tripsArr}
+              onLineClick={tripName => {
+                this.onLineClick(tripName);
+              }}
+            />
           </div>
         </div>
       </div>

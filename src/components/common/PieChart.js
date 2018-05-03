@@ -25,13 +25,16 @@ class PieChart extends Component {
     const percentage = [];
 
     if (!isEmpty(trip)) {
+      let sum = 0;
+      for (let speedRange in trip.statistic) {
+        sum += trip.statistic[speedRange];
+      }
+
       for (let speedRange in trip.statistic) {
         console.log(speedRange);
         labels.push(this.state.speedLabelMap[speedRange]);
         percentage.push(
-          `${(trip.statistic[speedRange] * 100 / trip.coords.length).toFixed(
-            2
-          )}`
+          `${(trip.statistic[speedRange] * 100 / sum).toFixed(2)}`
         );
       }
     }
