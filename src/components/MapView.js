@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Map, MarkerGroup, LineGroup } from "react-d3-map";
+import { isEmpty } from "lodash";
+
 import "../../style/MapView.scss";
 
 class MapView extends Component {
@@ -7,71 +9,61 @@ class MapView extends Component {
     super(props);
   }
 
-  componentDidMount() {}
-  buildLineGroup(data) {
-    return data.map((line, idx) => {
-      <LineGroup key={idx} data={line} meshClass={"trip-line"} />;
-    });
-  }
-  render() {
-    const { trip } = this.props;
-    debugger;
-    console.log("trip", trip);
-
-    // const coords = trip.coords.map((coord, index) => {
-    //   const array = [];
-    //   array.push(coord.lng);
-    //   array.push(coord.lat);
-    //   return array;
-    // });
+  buildData(trip) {
     let coords = [];
 
-    for (let j = 0; j < 2; j++) {
-      for (
-        let i = 0;
-        i < trip[j].coords.length;
-        i += ~~(trip[j].coords.length / 10)
-      ) {
-        const tmp = trip[j].coords[i];
-        coords.push([tmp.lng, tmp.lat]);
-      }
+    for (
+      let i = 0;
+      i < trip.coords.length;
+      i += ~~(trip.coords.length / 1000)
+    ) {
+      const tmp = trip.coords[i];
+      coords.push([tmp.lng, tmp.lat]);
+    }
+    return coords;
+  }
+
+  buildLineGroupElement() {
+    const { trips } = this.props;
+    console.log("------", trips.length);
+    let res = [];
+    if (isEmpty(trips)) {
+      console.log("********");
+      return res;
     }
 
-    console.log("coords", coords);
+    for (let i = 0; i < trips.length; i++) {
+      const trip = trips[i];
+      console.log(trip);
+      const data = {
+        type: "Feature",
+        properties: {
+          text: "this is a LineString!!!"
+        },
+        option: {
+          color: "blue"
+        },
+        geometry: {
+          type: "LineString",
+          coordinates: this.buildData(trip)
+        }
+      };
+      res.push(<LineGroup key={i} data={data} meshClass={"trip-line"} />);
+    }
+    console.log("res", res);
+    return res;
+  }
 
-    const data = {
-      type: "Feature",
-      properties: {
-        text: "this is a LineString!!!"
-      },
-      option: {
-        color: "blue"
-      },
-      geometry: {
-        type: "LineString",
-        coordinates: coords[0]
-      }
-    };
+  render() {
+    const { trip1 } = this.props;
 
-    const data2 = {
-      type: "Feature",
-      properties: {
-        text: "this is a LineString!!!"
-      },
-      option: {
-        color: "blue"
-      },
-      geometry: {
-        type: "LineString",
-        coordinates: coords[1]
-      }
-    };
+    console.log("props", this.props);
 
     const width = 700;
     const height = 700;
-    const scale = 1 << 20;
+    const scale = 1 << 18;
     const scaleExtent = [1, 1 << 20];
-    const center = coords[0];
+    const center = [-122.39242219446099, 37.74977073928103];
 
     // set your popupContent
     const popupContent = function(d) {
@@ -93,7 +85,6 @@ class MapView extends Component {
 
     return (
       <div>
-        <h1>ssss</h1>
         <Map
           width={width}
           height={height}
@@ -101,16 +92,7 @@ class MapView extends Component {
           scaleExtent={scaleExtent}
           center={center}
         >
-          <LineGroup
-            key={"line-test"}
-            data={data}
-            popupContent={popupContent}
-            onClick={onLineClick}
-            onCloseClick={onLineCloseClick}
-            onMouseOver={onLineMouseOver}
-            onMouseOut={onLineMouseOut}
-            meshClass={"trip-line"}
-          />
+          {this.buildLineGroupElement()}
         </Map>
       </div>
     );
