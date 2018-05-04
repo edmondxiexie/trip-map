@@ -7,7 +7,18 @@ Trips Map a React app containing an interactive map visualizing the distribution
 ## Features & Implementation
 
 You can choose a single trip by choosing trip name in the dropdown list or directly clicking the route on the map.
+
 ![Choose single trip](docs/img/choose.gif)
 
 The Pie Chart on the left shows the rough distribution of the speeds along this trip. And the Line Chart in the bottom shows the detail of every single record along the trip. By clicking the dot on the chart, a marker will display on the corresponding position on the map, showing the coordinate and the speed at this position.
+
 ![Line Chart](docs/img/linechart.gif)
+
+## Third-Party Libraries
+
+* [react-d3-map](http://map.reactd3.org/)
+* [react-chartjs-2](http://jerairrest.github.io/react-chartjs-2/)
+* [React](https://reactjs.org/)
+* [Sass](https://sass-lang.com/)
+* [Webpack](https://webpack.js.org/)
+* [lodash](https://lodash.com/)
