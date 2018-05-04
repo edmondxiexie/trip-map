@@ -12,11 +12,7 @@ class MapView extends Component {
   buildData(trip) {
     let coords = [];
 
-    for (
-      let i = 0;
-      i < trip.coords.length;
-      i += ~~(trip.coords.length / 1000)
-    ) {
+    for (let i = 0; i < trip.coords.length; i += ~~(trip.coords.length / 100)) {
       const tmp = trip.coords[i];
       coords.push([tmp.lng, tmp.lat]);
     }
@@ -25,7 +21,6 @@ class MapView extends Component {
 
   buildLineGroupElement() {
     const { trips } = this.props;
-    console.log("trips", trips);
     let res = [];
     if (isEmpty(trips)) {
       return res;
@@ -37,7 +32,7 @@ class MapView extends Component {
       const data = {
         type: "Feature",
         properties: {
-          text: "this is a LineString!!!"
+          text: tripName
         },
         option: {
           color: "blue"
@@ -55,18 +50,16 @@ class MapView extends Component {
           onClick={(dom, d, i) => this.props.onLineClick(tripName)}
           onMouseOver={() => this.onLineMouseOver()}
           onMouseOut={() => this.onLineMouseOut()}
+          popupContent={d => this.popupContent(d)}
         />
       );
     }
     return res;
   }
 
-  onLineClick(dom, d, i, tripName) {
-    console.log("click");
-    console.log("dom", dom);
-    console.log("d", d);
-    console.log("i", i);
-    console.log("tripName", tripName);
+  popupContent(d) {
+    console.log("D", d);
+    return d.properties.text;
   }
 
   onLineMouseOver(dom, d, i) {
@@ -78,34 +71,30 @@ class MapView extends Component {
   }
 
   render() {
-    const { trip1 } = this.props;
+    const { trips } = this.props;
+    const trip = trips[0];
 
     const width = 700;
     const height = 700;
-    const scale = 1 << 18;
+    let scale;
     const scaleExtent = [1, 1 << 20];
-    const center = [-122.39242219446099, 37.74977073928103];
+    let center = [];
 
-    // set your popupContent
-    // const popupContent = function(d) {
-    //   return d.properties.text;
-    // };
-
-    // var onLineMouseOut = function(dom, d, i) {
-    //   console.log("out");
-    // };
-    // var onLineMouseOver = function(dom, d, i) {
-    //   console.log("over");
-    // };
-    // var onLineClick = function(dom, d, i) {
-    //   console.log("click");
-    // };
-    // var onLineCloseClick = function(id) {
-    //   console.log("close click");
-    // };
+    if (trips.length === 1) {
+      const aveLng =
+        (trip.coords[0].lng + trip.coords[trip.coords.length - 1].lng) / 2;
+      const aveLat =
+        (trip.coords[0].lat + trip.coords[trip.coords.length - 1].lat) / 2;
+      center.push(aveLng);
+      center.push(aveLat);
+      scale = 65536;
+    } else {
+      center = [-122.39836967188276, 37.55754367467685];
+      scale = 262144;
+    }
 
     return (
-      <div>
+      <div className="map-view-base">
         <Map
           width={width}
           height={height}

@@ -31,7 +31,6 @@ class PieChart extends Component {
       }
 
       for (let speedRange in trip.statistic) {
-        console.log(speedRange);
         labels.push(this.state.speedLabelMap[speedRange]);
         percentage.push(
           `${(trip.statistic[speedRange] * 100 / sum).toFixed(2)}`

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MapView from "./MapView";
+import MapView from "./common/MapView";
 import SelectFieldGroup from "./common/SelectFieldGroup";
 import PieChart from "./common/PieChart";
 import { Pie } from "react-chartjs-2";
@@ -17,7 +17,7 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    const tripFiles = require.context("../data/tmp", false, /\.json$/);
+    const tripFiles = require.context("../data/tmp2", false, /\.json$/);
 
     const data = [];
     const dataMap = {};
@@ -99,12 +99,10 @@ export default class App extends Component {
   }
 
   onLineClick(tripName) {
-    console.log("lineClick", tripName);
     this.setState({ curTripName: tripName });
   }
 
   onSelectChange(selected, key) {
-    console.log("selected", selected);
     if (selected) {
       this.setState({ curTripName: selected.value });
     } else {
@@ -130,40 +128,57 @@ export default class App extends Component {
       };
     }
 
-    console.log("curTrip", curTrip);
+    let mapArr, scale;
+    if (curTripName === "all") {
+      mapArr = tripsArr;
+      scale = 262144;
+    } else {
+      mapArr = [];
+      mapArr.push(Object.assign({ tripFileName: curTripName }, curTrip));
+      scale = 65536;
+    }
 
     return (
-      <div className="container">
-        <h1>Hello World</h1>
-        <div className="row">
-          <div className="col-md-4">
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                this.setState({
-                  curTripName: "all"
-                });
-              }}
-            >
-              Show All Data
-            </button>
-            <SelectFieldGroup
-              label="Trip"
-              name="curTripName"
-              value={curTripName}
-              options={tripOptions}
-              placeholder="Choose trip"
-              onChange={value => this.onSelectChange(value, "curTripName")}
-            />
-            <PieChart trip={curTrip} />
-          </div>
-          <div className="col-md-8">
-            <MapView
-              trips={tripsArr}
-              onLineClick={tripName => {
-                this.onLineClick(tripName);
-              }}
-            />
+      <div className="app-base">
+        <div className="container">
+          <h1>Trips Data</h1>
+          <div className="row">
+            <div className="col-md-4">
+              <div className="statistic-title">
+                <h3>Trips Statistic</h3>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    this.setState({
+                      curTripName: "all"
+                    });
+                  }}
+                >
+                  Show All Trips
+                </button>
+              </div>
+              <SelectFieldGroup
+                label="Trip Selector"
+                name="curTripName"
+                value={curTripName}
+                options={tripOptions}
+                placeholder="Choose Trip"
+                onChange={value => this.onSelectChange(value, "curTripName")}
+              />
+              <div className="pie-chart-base">
+                <h4>Distribution of Speeds</h4>
+                <PieChart trip={curTrip} />
+              </div>
+            </div>
+            <div className="col-md-8">
+              <MapView
+                trips={mapArr}
+                onLineClick={tripName => {
+                  this.onLineClick(tripName);
+                }}
+                scale={scale}
+              />
+            </div>
           </div>
         </div>
       </div>

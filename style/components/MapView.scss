@@ -1,0 +1,13 @@
+.map-view-base {
+  border: 1px solid #f7f1e3;
+  padding: 25px;
+
+  .trip-line {
+    stroke: #34ace0 !important;
+    stroke-width: 3px !important;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
