@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import MapView from "./common/MapView";
 import SelectFieldGroup from "./common/SelectFieldGroup";
 import PieChart from "./common/PieChart";
+import LineChart from "./common/LineChart";
 import { Pie } from "react-chartjs-2";
+import { isEmpty } from "lodash";
 
 export default class App extends Component {
   constructor(props) {
@@ -12,7 +14,8 @@ export default class App extends Component {
       tripsArr: [],
       curTripName: "all",
       tripOptions: {},
-      allStatistic: {}
+      allStatistic: {},
+      markerPoint: {}
     };
   }
 
@@ -98,15 +101,28 @@ export default class App extends Component {
     });
   }
 
-  onLineClick(tripName) {
+  onRouteClick(tripName) {
     this.setState({ curTripName: tripName });
+  }
+
+  onLineClick(elems) {
+    if (isEmpty(elems)) {
+      return;
+    }
+
+    const index = elems[0]._index;
+    const coord = this.state.trips[this.state.curTripName].coords[index];
+
+    this.setState({
+      markerPoint: coord
+    });
   }
 
   onSelectChange(selected, key) {
     if (selected) {
       this.setState({ curTripName: selected.value });
     } else {
-      this.setState({ curTripName: "all" });
+      this.setState({ curTripName: "all", markerPoint: {} });
     }
   }
 
@@ -116,7 +132,8 @@ export default class App extends Component {
       tripsArr,
       curTripName,
       tripOptions,
-      allStatistic
+      allStatistic,
+      markerPoint
     } = this.state;
 
     let curTrip = {};
@@ -150,7 +167,8 @@ export default class App extends Component {
                   className="btn btn-primary"
                   onClick={() => {
                     this.setState({
-                      curTripName: "all"
+                      curTripName: "all",
+                      markerPoint: {}
                     });
                   }}
                 >
@@ -166,20 +184,27 @@ export default class App extends Component {
                 onChange={value => this.onSelectChange(value, "curTripName")}
               />
               <div className="pie-chart-base">
-                <h4>Distribution of Speeds</h4>
+                <h4>Distribution of Speeds (%)</h4>
                 <PieChart trip={curTrip} />
               </div>
             </div>
             <div className="col-md-8">
               <MapView
                 trips={mapArr}
+                markerPoint={markerPoint}
                 onLineClick={tripName => {
-                  this.onLineClick(tripName);
+                  this.onRouteClick(tripName);
                 }}
                 scale={scale}
               />
             </div>
           </div>
+          <LineChart
+            trip={mapArr}
+            onLineClick={elems => {
+              this.onLineClick(elems);
+            }}
+          />
         </div>
       </div>
     );

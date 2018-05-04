@@ -10,7 +10,7 @@ class MapView extends Component {
   buildData(trip) {
     let coords = [];
 
-    for (let i = 0; i < trip.coords.length; i += ~~(trip.coords.length / 100)) {
+    for (let i = 0; i < trip.coords.length; i++) {
       const tmp = trip.coords[i];
       coords.push([tmp.lng, tmp.lat]);
     }
@@ -46,13 +46,76 @@ class MapView extends Component {
           data={data}
           meshClass={"trip-line"}
           onClick={(dom, d, i) => this.props.onLineClick(tripName)}
-          onMouseOver={() => this.onLineMouseOver()}
-          onMouseOut={() => this.onLineMouseOut()}
           popupContent={d => this.popupContent(d)}
         />
       );
     }
     return res;
+  }
+
+  popupContent(d) {
+    const { speed, lng, lat } = this.props.markerPoint;
+    return (
+      <div>
+        <div>
+          <h5>Speed:</h5>
+          {speed}
+        </div>
+        <div>
+          <h5>Lng:</h5>
+          {lng}
+        </div>
+        <div>
+          <h5>Lat:</h5>
+          {lat}
+        </div>
+      </div>
+    );
+  }
+
+  onMarkerClick(component, d, i) {
+    component.showPopup();
+  }
+
+  onMarkerCloseClick(component, id) {
+    component.hidePopup();
+  }
+
+  onMarkerMouseOver(component, d, i) {
+    component.showPopup();
+  }
+
+  buildMarkerGroupElement() {
+    const { markerPoint } = this.props;
+    if (isEmpty(markerPoint)) {
+      return;
+    }
+
+    const data = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        coordinates: [markerPoint.lng, markerPoint.lat]
+      }
+    };
+
+    return (
+      <MarkerGroup
+        key={markerPoint.index}
+        data={data}
+        popupContent={d => {
+          return this.popupContent(d);
+        }}
+        onClick={(component, d, i) => this.onMarkerClick(component, d, i)}
+        onCloseClick={(component, d, i) =>
+          this.onMarkerCloseClick(component, d, i)
+        }
+        onMouseOver={(component, d, i) =>
+          this.onMarkerMouseOver(component, d, i)
+        }
+        markerClass={"map-marker"}
+      />
+    );
   }
 
   render() {
@@ -88,6 +151,7 @@ class MapView extends Component {
           center={center}
         >
           {this.buildLineGroupElement()}
+          {this.buildMarkerGroupElement()}
         </Map>
       </div>
     );
