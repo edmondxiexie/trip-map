@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { Map, MarkerGroup, LineGroup } from "react-d3-map";
 import { isEmpty } from "lodash";
 
-// import "../../style/MapView.scss";
-
 class MapView extends Component {
   constructor(props) {
     super(props);
@@ -55,19 +53,6 @@ class MapView extends Component {
       );
     }
     return res;
-  }
-
-  popupContent(d) {
-    console.log("D", d);
-    return d.properties.text;
-  }
-
-  onLineMouseOver(dom, d, i) {
-    console.log("over");
-  }
-
-  onLineMouseOut(dom, d, i) {
-    console.log("out");
   }
 
   render() {
