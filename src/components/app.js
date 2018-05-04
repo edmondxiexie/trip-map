@@ -17,7 +17,7 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    let tripFiles = require.context("../data/trips", false, /\.json$/);
+    let tripFiles = require.context("../data/tmp2", false, /\.json$/);
 
     const data = [];
     const dataMap = {};
