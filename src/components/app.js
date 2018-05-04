@@ -22,7 +22,7 @@ export default class App extends Component {
     if (ENV === "DEV") {
       filePath = "../data/tmp2";
     } else if (ENV === "PROD") {
-      filePath = "../data/trips";
+      filePath = "../data/tmp2";
     }
 
     const tripFiles = require.context("../data/tmp2", false, /\.json$/);
