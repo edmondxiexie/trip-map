@@ -27,6 +27,8 @@ export default class App extends Component {
 
     const tripFiles = require.context(filePath, false, /\.json$/);
 
+    console.log("filePath", filePath);
+
     const data = [];
     const dataMap = {};
     let exampleTrip;
