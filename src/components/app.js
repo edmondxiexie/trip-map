@@ -17,17 +17,13 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    let filePath;
+    let tripFiles = require.context("../data/tmp2", false, /\.json$/);
 
-    if (ENV === "DEV") {
-      filePath = "../data/tmp2";
-    } else if (ENV === "PROD") {
-      filePath = "../data/trips";
-    }
-
-    const tripFiles = require.context(filePath, false, /\.json$/);
-
-    console.log("filePath", filePath);
+    // if (ENV === "DEV") {
+    //   tripFiles = require.context("../data/tmp2", false, /\.json$/);
+    // } else if (ENV === "PROD") {
+    //   tripFiles = require.context("../data/tmp2", false, /\.json$/);
+    // }
 
     const data = [];
     const dataMap = {};
