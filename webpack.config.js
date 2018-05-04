@@ -1,10 +1,9 @@
 var webpack = require("webpack");
-
+const path = require("path");
 module.exports = {
   entry: ["./src/index.js"],
   output: {
-    path: __dirname,
-    publicPath: "/",
+    path: path.resolve("./asset/js"),
     filename: "bundle.js"
   },
   module: {
